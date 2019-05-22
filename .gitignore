@@ -1,0 +1,5 @@
+*.img
+*.xz
+*.7z
+tmp
+output
