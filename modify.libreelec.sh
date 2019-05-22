@@ -49,6 +49,7 @@ func_release() {
 	gzip -d -k "$PKG"
 	func_modify $IMG $DTB
 	IMG_NEW=$(basename $(sed "s/${origin}/${target}/" <<< $IMG))
+	echo "IMG_NEW: $IMG_NEW"
 	mv $IMG $output/$IMG_NEW
 	xz -T0 -v $output/$IMG_NEW
 }
