@@ -1,11 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 # requirements: sfdisk mtools jq
 
 TMPDIR="tmp"
+origin="rock64"
+target="beikeyun"
+output="output"
 
 func_modify() {
-	DISK="$1"
-	DTB="$2"
+	local DISK="$1"
+	local DTB="$2"
 	[ ! -f "$DISK" -o ! -f "$DTB" ] && echo "file not found!" && exit 1
 
 	SYSTEM_PART_START=$(sfdisk -J ${DISK} |jq .partitiontable.partitions[0].start)
@@ -38,12 +41,28 @@ func_modify() {
 	rm -rf ${TMPDIR}
 }
 
+func_release() {
+	local PKG="$1"
+	local DTB="$2"
+	[ ! -f "$PKG" -o ! -f "$DTB" ] && echo "file not found!" && exit 1
+	IMG="`sed 's/.gz//' <<< $PKG`"
+	gzip -d -k "$PKG"
+	func_modify $IMG $DTB
+	IMG_NEW="`sed "s/${origin}/${target}/" <<< $IMG`"
+	IMG_NEW="${output}/$(basename $IMG_NEW)"
+	mv $IMG $IMG_NEW
+	xz -T0 -v $IMG_NEW
+}
+
 case "$1" in
 modify)
 	func_modify "$2" "$3"
 	;;
+release)
+	func_release "$2" "$3"
+	;;
 *)
-	echo "Usage: $0 { modify [img] [dtb] }"
+	echo "Usage: $0 { modify [img] [dtb] | release [archive] [dtb] }"
 	exit 1
 	;;
 esac

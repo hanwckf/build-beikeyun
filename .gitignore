@@ -1,5 +1,5 @@
 *.img
 *.xz
 *.7z
+*.gz
 tmp
-output

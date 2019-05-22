@@ -62,7 +62,7 @@ iface eth0 inet6 auto
 func_release() {
 	local dlpkg=$1
 	[ ! -f "$dlpkg" ] && echo "dlpkg not found!" && return 1
-	rm -rf ${tmpdir} ${output}
+	rm -rf ${tmpdir}
 	7z x -o${tmpdir} $dlpkg && cd ${tmpdir} && sha256sum -c sha256sum.sha && cd - > /dev/null || exit 1
 
 	local dtb=$2
