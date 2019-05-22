@@ -73,7 +73,7 @@ func_release() {
 
 	imgname_new=`basename $imgfile | sed "s/${origin}/${target}/"`
 	echo "new image file: $imgname_new"
-	mkdir -p ${output}
+
 	mv $imgfile ${output}/${imgname_new}
 	xz -T0 -v ${output}/${imgname_new}
 	rm -rf ${tmpdir}
