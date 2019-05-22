@@ -45,13 +45,12 @@ func_release() {
 	local PKG="$1"
 	local DTB="$2"
 	[ ! -f "$PKG" -o ! -f "$DTB" ] && echo "file not found!" && exit 1
-	IMG="`sed 's/.gz//' <<< $PKG`"
+	IMG="$(sed 's/.gz//' <<< $PKG)"
 	gzip -d -k "$PKG"
 	func_modify $IMG $DTB
-	IMG_NEW="`sed "s/${origin}/${target}/" <<< $IMG`"
-	IMG_NEW="${output}/$(basename $IMG_NEW)"
-	mv $IMG $IMG_NEW
-	xz -T0 -v $IMG_NEW
+	IMG_NEW=$(basename $(sed "s/${origin}/${target}/" <<< $IMG))
+	mv $IMG $output/$IMG_NEW
+	xz -T0 -v $output/$IMG_NEW
 }
 
 case "$1" in
