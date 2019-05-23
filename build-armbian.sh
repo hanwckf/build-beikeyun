@@ -1,5 +1,5 @@
 #!/bin/bash
-# requirements: jq sfdisk u-boot-tools
+# requirements: sudo jq sfdisk u-boot-tools
 
 [ "$EUID" != "0" ] && echo "please run as root" && exit 1
 
