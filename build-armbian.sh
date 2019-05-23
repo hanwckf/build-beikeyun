@@ -75,7 +75,9 @@ func_release() {
 	echo "new image file: $imgname_new"
 
 	mv $imgfile ${output}/${imgname_new}
-	xz -f -T0 -v ${output}/${imgname_new}
+	if [ -n "$TRAVIS_TAG" ]; then
+		xz -f -T0 -v ${output}/${imgname_new}
+	fi
 	rm -rf ${tmpdir}
 }
 

@@ -51,7 +51,9 @@ func_release() {
 	IMG_NEW=$(basename $IMG |sed "s/${origin}/${target}/")
 	echo "IMG_NEW: $IMG_NEW"
 	mv $IMG $output/$IMG_NEW
-	xz -f -T0 -v $output/$IMG_NEW
+	if [ -n "$TRAVIS_TAG" ]; then
+		xz -f -T0 -v $output/$IMG_NEW
+	fi
 }
 
 case "$1" in
