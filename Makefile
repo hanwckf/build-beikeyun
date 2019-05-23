@@ -32,4 +32,4 @@ armbian_release: $(ARMBIAN_PKGS)
 	done )
 
 armbian_clean:
-	rm -rf $(ARMBIAN_PKGS)
+	rm -f $(ARMBIAN_PKGS)

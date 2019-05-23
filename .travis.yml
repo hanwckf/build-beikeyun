@@ -1,0 +1,25 @@
+if: tag IS present
+dist: xenial
+language: minimal
+sudo: required
+addons:
+  apt:
+    packages:
+    - p7zip-full
+    - mtools
+    - jq
+    - u-boot-tools
+script:
+- make all
+- ls -l output
+deploy:
+  provider: releases
+  api_key:
+    secure: DtKpcwr08uKZn4DfajyknVfMTO9rJ38ASWqokZFl3LcjZdQhd8lAiPSkq1GMmU1QmlKqHXEJFcYsv9lDR3NSC/03N2NE1DzUp6Xvl0QX3A/Xtd54RbP0RK3/SXaeJKAz1UsNLXYEi5D+q2yz3pkAhdH3IyNTeMUm2E/7k7R95mjVkF6wPTnwmF0avSfrwud2MYo8EroezQXg+nJYRGLNLdAX+zyF2FDIcxFI8s3Z/WBQN6u5BXX0cy//C+J+M/M7Apf9zaMqhibmypnB0YJkhM+Of/C90BTxgQSTDVHwBFTn9cHIgH/Ox1yCCQ8fv/olhf/G4jKakEf1V4kJ8BIfGY0M6b1XqFMtxa84vcXGW5L+TXpVkJOfw06YNtLJLeLuqfqqGqRCuRra80NuoBwRo+JUHpnCZAMxDIHfhVLD8jKkzzL0S4pUykppPlxUgudbkNVLXkOIOEdcn6/G8V0NgjVd2o/Pr9ZUCuZGl5HoJpLhleYPss9/0Pba+aBbAFq8TufmjPsC6IaivVC1pRWz2dLJ/2eoNQOAX72D9HRuRLFjDSVIdUojkv7DNH85iJM4zGUZTzC/+Nf0HizXH7peYNPlPiPdyvIfxPdBED+AVxt5jleNIdovnEiB3DoQQfmqnw1/R3t0ichxZKpNnJFcWUTH8t6gqgWFjrs68lAHQvM=
+  skip_cleanup: true
+  overwrite: true
+  file_glob: true
+  file: output/*.xz
+  on:
+    repo: hanwckf/build-beikeyun
+    tags: true

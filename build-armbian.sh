@@ -29,7 +29,7 @@ func_modify() {
 
 	cp -f $dtb $mount_point/boot/
 
-	sed -i '/^verbosity/cverbosity=7' $mount_point/boot/armbianEnv.txt	
+	sed -i '/^verbosity/cverbosity=7' $mount_point/boot/armbianEnv.txt
 
 	if [ -z "`grep fdtfile $mount_point/boot/armbianEnv.txt`" ]; then
 		echo "fdtfile=$(basename $dtb)" >> $mount_point/boot/armbianEnv.txt
