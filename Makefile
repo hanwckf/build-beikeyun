@@ -11,13 +11,13 @@ LIBREELEC_PKGS :=
 
 .PRECIOUS: $(ARMBIAN_PKGS)
 
-all: dl release
-
-dl: $(ARMBIAN_PKGS)
-
-release: armbian_release
+all: armbian
 
 clean: armbian_clean
+
+armbian: armbian_dl armbian_release
+
+armbian_dl: $(ARMBIAN_PKGS)
 
 $(ARMBIAN_PKGS):
 	( for pkg in $(ARMBIAN_PKGS); do \
