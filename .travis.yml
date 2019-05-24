@@ -11,7 +11,7 @@ addons:
     - u-boot-tools
     - html-xml-utils
 script:
-- make BUILD_LIBREELEC=y all
+- make BUILD_ARMBIAN=y BUILD_LIBREELEC=y BUILD_LAKKA=y
 - ls -l output
 deploy:
   provider: releases
