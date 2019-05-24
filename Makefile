@@ -31,14 +31,11 @@ armbian_clean:
 
 ifeq ($(BUILD_LIBREELEC),y)
 LIBREELEC_PKG := $(shell basename `hxwls "http://archive.libreelec.tv/?C=M;O=D" |grep rock64.img.gz |head -1`)
+
 libreelec: libreelec_dl libreelec_release
+
 libreelec_clean:
 	rm -f $(LIBREELEC_PKG)
-else
-LIBREELEC_PKG :=
-libreelec:
-libreelec_clean:
-endif
 
 libreelec_dl:
 	( if [ -n $(LIBREELEC_PKG) ]; then \
@@ -51,3 +48,7 @@ libreelec_dl:
 
 libreelec_release: libreelec_dl
 	./build-libreelec.sh release $(LIBREELEC_PKG) $(DTB_BOX)
+else
+libreelec:
+libreelec_clean:
+endif
