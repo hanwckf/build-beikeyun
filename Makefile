@@ -1,9 +1,12 @@
 DTB_HEADLESS := dtbs/4.4-bsp/headless/rk3328-beikeyun.dtb
 DTB_BOX := dtbs/4.4-bsp/box/rk3328-beikeyun.dtb
 
+OUTPUT := output
+
 all: armbian libreelec lakka
 
 clean: armbian_clean libreelec_clean lakka_clean
+	rm -f $(OUTPUT)/*.img $(OUTPUT)/*.xz
 
 ifeq ($(BUILD_ARMBIAN),y)
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
