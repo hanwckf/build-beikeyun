@@ -35,7 +35,7 @@ func_modify() {
 		echo "extlinux.conf patched!" || { echo "extlinux.conf patch failed!"; exit 1; }
 
 	mdel -i ${DISK}@@${OFFSET} ::/$(basename ${DTB}) 2>/dev/null
-	mcopy -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched!" || { echo "dtb patch failed!"; exit 1; }
+	mcopy -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
 
 	sync
 	rm -rf ${TMPDIR}

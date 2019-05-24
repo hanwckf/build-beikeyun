@@ -9,8 +9,9 @@ addons:
     - mtools
     - jq
     - u-boot-tools
+    - html-xml-utils
 script:
-- make all
+- make BUILD_LIBREELEC=y all
 - ls -l output
 deploy:
   provider: releases

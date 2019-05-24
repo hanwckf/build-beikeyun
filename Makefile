@@ -6,14 +6,9 @@ DTB_BOX := dtbs/4.4-bsp/box/rk3328-beikeyun.dtb
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
 ARMBIAN_PKGS := Ubuntu_bionic_default.7z Debian_stretch_default.7z
 
-LIBREELEC_URL_BASE := http://archive.libreelec.tv
-LIBREELEC_PKGS := 
+all: armbian libreelec
 
-.PRECIOUS: $(ARMBIAN_PKGS)
-
-all: armbian
-
-clean: armbian_clean
+clean: armbian_clean libreelec_clean
 
 armbian: armbian_dl armbian_release
 
@@ -33,3 +28,26 @@ armbian_release: $(ARMBIAN_PKGS)
 
 armbian_clean:
 	rm -f $(ARMBIAN_PKGS)
+
+ifeq ($(BUILD_LIBREELEC),y)
+LIBREELEC_PKG := $(shell basename `hxwls "http://archive.libreelec.tv/?C=M;O=D" |grep rock64.img.gz |head -1`)
+libreelec: libreelec_dl libreelec_release
+libreelec_clean:
+	rm -f $(LIBREELEC_PKG)
+else
+LIBREELEC_PKG :=
+libreelec:
+libreelec_clean:
+endif
+
+libreelec_dl:
+	( if [ -n $(LIBREELEC_PKG) ]; then \
+		if [ ! -f $(LIBREELEC_PKG) ]; then \
+			wget "http://archive.libreelec.tv/$(LIBREELEC_PKG)" ; \
+		fi \
+	else \
+		echo "fetch libreelec dl url fail" ; exit 1 ; \
+	fi )
+
+libreelec_release: libreelec_dl
+	./build-libreelec.sh release $(LIBREELEC_PKG) $(DTB_BOX)
