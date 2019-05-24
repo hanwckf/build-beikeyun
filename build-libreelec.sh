@@ -2,7 +2,7 @@
 # requirements: sfdisk mtools jq
 
 TMPDIR="tmp"
-origin="rock64"
+origin=${4:-rock64}
 target="beikeyun"
 output="output"
 
