@@ -2,13 +2,14 @@
 # requirements: sfdisk mtools jq
 
 TMPDIR="tmp"
-origin="rock64"
+origin="ROCK64"
 target="beikeyun"
 output="output"
 
 func_modify() {
 	local DISK="$1"
 	local DTB="$2"
+	local IDB="$3"
 	[ ! -f "$DISK" -o ! -f "$DTB" ] && echo "file not found!" && exit 1
 
 	SYSTEM_PART_START=$(sfdisk -J ${DISK} |jq .partitiontable.partitions[0].start)
@@ -20,10 +21,10 @@ func_modify() {
 
 	mcopy -i ${DISK}@@${OFFSET} ::/extlinux/extlinux.conf ./${TMPDIR} || { echo "extlinux.conf dump failed!"; exit 1; }
 
-	sed -i "/^  FDT/c\ \ FDT \/$(basename ${DTB})" ./${TMPDIR}/extlinux.conf
-	sed -i '/^  APPEND/s/quiet//' ./${TMPDIR}/extlinux.conf
+	sed -i "/^    fdt/c\ \ \ \ fdt \/$(basename ${DTB})" ./${TMPDIR}/extlinux.conf
+	sed -i '/^    append/s/quiet//' ./${TMPDIR}/extlinux.conf
 	if [ -z "`grep panic ./${TMPDIR}/extlinux.conf`" ]; then
-		sed -i '/^  APPEND/s/$/ panic=10/' ./${TMPDIR}/extlinux.conf
+		sed -i '/^    append/s/$/ panic=10/' ./${TMPDIR}/extlinux.conf
 	fi
 
 	echo "extlinux.conf:"
@@ -37,6 +38,7 @@ func_modify() {
 	mdel -i ${DISK}@@${OFFSET} ::/$(basename ${DTB}) 2>/dev/null
 	mcopy -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
 
+	dd if=${IDB} of=${DISK} seek=64 conv=notrunc status=noxfer && echo "idb patched: ${IDB}" || { echo "idb patch failed!"; exit 1; }
 	sync
 	rm -rf ${TMPDIR}
 }
@@ -44,10 +46,11 @@ func_modify() {
 func_release() {
 	local PKG="$1"
 	local DTB="$2"
+	local IDB="$3"
 	[ ! -f "$PKG" -o ! -f "$DTB" ] && echo "file not found!" && exit 1
 	IMG="$(sed 's/.gz//' <<< $PKG)"
 	gzip -d -k "$PKG"
-	func_modify $IMG $DTB
+	func_modify $IMG $DTB $IDB
 	IMG_NEW=$(basename $IMG |sed "s/${origin}/${target}/")
 	echo "IMG_NEW: $IMG_NEW"
 	mv $IMG $output/$IMG_NEW
@@ -58,13 +61,13 @@ func_release() {
 
 case "$1" in
 modify)
-	func_modify "$2" "$3"
+	func_modify "$2" "$3" "$4"
 	;;
 release)
-	func_release "$2" "$3"
+	func_release "$2" "$3" "$4"
 	;;
 *)
-	echo "Usage: $0 { modify [img] [dtb] | release [archive] [dtb] }"
+	echo "Usage: $0 { modify [img] [dtb] [idb] | release [archive] [dtb] [idb] }"
 	exit 1
 	;;
 esac
