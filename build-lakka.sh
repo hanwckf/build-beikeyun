@@ -10,6 +10,7 @@ func_modify() {
 	local DISK="$1"
 	local DTB="$2"
 	local IDB="$3"
+	local UBOOT="$4"
 	[ ! -f "$DISK" -o ! -f "$DTB" ] && echo "file not found!" && exit 1
 
 	SYSTEM_PART_START=$(sfdisk -J ${DISK} |jq .partitiontable.partitions[0].start)
@@ -38,7 +39,8 @@ func_modify() {
 	mdel -i ${DISK}@@${OFFSET} ::/$(basename ${DTB}) 2>/dev/null
 	mcopy -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
 
-	dd if=${IDB} of=${DISK} seek=64 conv=notrunc status=noxfer && echo "idb patched: ${IDB}" || { echo "idb patch failed!"; exit 1; }
+	dd if=${IDB} of=${DISK} seek=64 bs=512 conv=notrunc status=noxfer && echo "idb patched: ${IDB}" || { echo "idb patch failed!"; exit 1; }
+	dd if=${UBOOT} of=${DISK} seek=16384 bs=512 conv=notrunc status=noxfer && echo "u-boot patched: ${UBOOT}" || { echo "u-boot patch failed!"; exit 1; }
 	sync
 	rm -rf ${TMPDIR}
 }
@@ -47,10 +49,11 @@ func_release() {
 	local PKG="$1"
 	local DTB="$2"
 	local IDB="$3"
+	local UBOOT="$4"
 	[ ! -f "$PKG" -o ! -f "$DTB" ] && echo "file not found!" && exit 1
 	IMG="$(sed 's/.gz//' <<< $PKG)"
 	gzip -d -k "$PKG"
-	func_modify $IMG $DTB $IDB
+	func_modify $IMG $DTB $IDB $UBOOT
 	IMG_NEW=$(basename $IMG |sed "s/${origin}/${target}/")
 	echo "IMG_NEW: $IMG_NEW"
 	mv $IMG $output/$IMG_NEW
@@ -61,13 +64,13 @@ func_release() {
 
 case "$1" in
 modify)
-	func_modify "$2" "$3" "$4"
+	func_modify "$2" "$3" "$4" "$5"
 	;;
 release)
-	func_release "$2" "$3" "$4"
+	func_release "$2" "$3" "$4" "$5"
 	;;
 *)
-	echo "Usage: $0 { modify [img] [dtb] [idb] | release [archive] [dtb] [idb] }"
+	echo "Usage: $0 { modify [img] [dtb] [idb] [u-boot] | release [archive] [dtb] [idb] [u-boot] }"
 	exit 1
 	;;
 esac
