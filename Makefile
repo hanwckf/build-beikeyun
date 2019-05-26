@@ -3,7 +3,12 @@ DTB_BOX := dtbs/4.4-bsp/box/rk3328-beikeyun.dtb
 
 OUTPUT := output
 
-all: armbian libreelec lakka
+.PHONY: help build clean
+
+help:
+	@echo "Usage: make BUILD_[SYSTEM1]=y BUILD_[SYSTEM2]=y build"
+
+build: armbian libreelec lakka
 
 clean: armbian_clean libreelec_clean lakka_clean
 	rm -f $(OUTPUT)/*.img $(OUTPUT)/*.xz
