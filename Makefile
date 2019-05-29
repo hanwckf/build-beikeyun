@@ -8,9 +8,9 @@ OUTPUT := output
 help:
 	@echo "Usage: make BUILD_[SYSTEM1]=y BUILD_[SYSTEM2]=y build"
 
-build: armbian libreelec lakka
+build: armbian libreelec lakka alpine
 
-clean: armbian_clean libreelec_clean lakka_clean
+clean: armbian_clean libreelec_clean lakka_clean alpine_clean
 	rm -f $(OUTPUT)/*.img $(OUTPUT)/*.xz
 
 ifeq ($(BUILD_ARMBIAN),y)
@@ -91,4 +91,39 @@ lakka_release: lakka_dl
 else
 lakka:
 lakka_clean:
+endif
+
+ifeq ($(BUILD_ALPINE),y)
+ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
+ARMBIAN_PKG := Ubuntu_bionic_default.7z
+
+ALPINE_VERSION := 3.9.4
+ALPINE_URL_BASE := http://dl-cdn.alpinelinux.org/alpine/v3.9/releases/aarch64/
+ALPINE_PKG := alpine-minirootfs-$(ALPINE_VERSION)-aarch64.tar.gz
+
+alpine: armbian_dl alpine_dl alpine_release
+
+armbian_dl: $(ARMBIAN_PKG)
+
+$(ARMBIAN_PKG):
+	(if [ ! -f $(ARMBIAN_PKG) ]; then \
+		wget $(ARMBIAN_URL_BASE)/$(ARMBIAN_PKG) ; \
+	fi )
+
+alpine_dl: $(ALPINE_PKG)
+
+$(ALPINE_PKG):
+	(if [ ! -f $(ALPINE_PKG) ]; then \
+		wget $(ALPINE_URL_BASE)/$(ALPINE_PKG) ; \
+	fi )
+
+alpine_release: armbian_dl alpine_dl
+	sudo ./build-alpine.sh release $(ARMBIAN_PKG) $(DTB_HEADLESS) $(ALPINE_PKG)
+
+alpine_clean:
+	rm -f $(ARMBIAN_PKG) $(ALPINE_PKG)
+
+else
+alpine:
+alpine_clean:
 endif

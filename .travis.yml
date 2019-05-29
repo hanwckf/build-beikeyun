@@ -10,6 +10,8 @@ addons:
     - jq
     - u-boot-tools
     - html-xml-utils
+    - qemu-user-static
+    - binfmt-support
 script:
 - make BUILD_ARMBIAN=y BUILD_LIBREELEC=y BUILD_LAKKA=y build
 - ls -l output
