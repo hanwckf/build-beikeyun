@@ -13,7 +13,7 @@ addons:
     - qemu-user-static
     - binfmt-support
 script:
-- make BUILD_ARMBIAN=y BUILD_LIBREELEC=y BUILD_LAKKA=y build
+- make BUILD_ARMBIAN=y BUILD_LIBREELEC=y BUILD_LAKKA=y BUILD_ALPINE=y build
 - ls -l output
 deploy:
   provider: releases
