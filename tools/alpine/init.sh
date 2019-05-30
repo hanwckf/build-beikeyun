@@ -2,7 +2,7 @@
 
 export PATH=/usr/sbin:/usr/bin:/bin:/sbin
 
-apk update && apk add alpine-base haveged dropbear parted e2fsprogs-extra dropbear-scp
+apk update --no-progress && apk add --no-progress alpine-base haveged dropbear parted e2fsprogs-extra dropbear-scp
 
 echo "root:admin" | chpasswd
 
