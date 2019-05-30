@@ -1,5 +1,5 @@
 #!/bin/bash
-# requirements: sudo jq sfdisk u-boot-tools
+# requirements: sudo jq sfdisk u-boot-tools qemu bimfmt_misc
 # require armbian kernel and u-boot
 
 [ "$EUID" != "0" ] && echo "please run as root" && exit 1
