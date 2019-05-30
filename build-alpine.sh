@@ -59,10 +59,11 @@ func_generate() {
 	# mount armbian rootfs
 	func_mount_armbian $armbian_img $armbian_mount_point
 
-	# get /boot /lib/modules
-	echo "copy /boot,/lib/modules from armbian"
+	# get /boot /lib/modules /lib/firmware
+	echo "copy /boot,/lib/modules,/lib/firmware from armbian"
 	cp -rf $armbian_mount_point/boot $rootfs_mount_point/boot
 	cp -rf $armbian_mount_point/lib/modules $rootfs_mount_point/lib/modules
+	cp -rf $armbian_mount_point/lib/firmware $rootfs_mount_point/lib/firmware
 
 	#umount armbian rootfs
 	func_umount_armbian
