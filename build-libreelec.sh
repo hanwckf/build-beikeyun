@@ -18,7 +18,7 @@ func_modify() {
 	echo "OFFSET: $OFFSET"
 	mkdir -p ${TMPDIR}
 
-	mcopy -i ${DISK}@@${OFFSET} ::/extlinux/extlinux.conf ./${TMPDIR} || { echo "extlinux.conf dump failed!"; exit 1; }
+	mcopy -no -i ${DISK}@@${OFFSET} ::/extlinux/extlinux.conf ./${TMPDIR} || { echo "extlinux.conf dump failed!"; exit 1; }
 
 	sed -i "/^  FDT/c\ \ FDT \/$(basename ${DTB})" ./${TMPDIR}/extlinux.conf
 	sed -i '/^  APPEND/s/quiet//' ./${TMPDIR}/extlinux.conf
@@ -30,12 +30,19 @@ func_modify() {
 	echo "#################"
 	cat ./${TMPDIR}/extlinux.conf
 	echo "#################"
-	mdel -i ${DISK}@@${OFFSET} ::/extlinux/extlinux.conf && \
-		mcopy -i ${DISK}@@${OFFSET} ./${TMPDIR}/extlinux.conf ::/extlinux/extlinux.conf && \
+	mcopy -no -i ${DISK}@@${OFFSET} ./${TMPDIR}/extlinux.conf ::/extlinux/extlinux.conf && \
 		echo "extlinux.conf patched!" || { echo "extlinux.conf patch failed!"; exit 1; }
 
-	mdel -i ${DISK}@@${OFFSET} ::/$(basename ${DTB}) 2>/dev/null
-	mcopy -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
+	mcopy -no -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
+
+	# add /opt to SYSTEM.squashfs for entware
+	mcopy -no -i ${DISK}@@${OFFSET} ::/SYSTEM ./${TMPDIR} || { echo "SYSTEM.squashfs dump failed!"; exit 1; }
+	mkdir -p ./${TMPDIR}/new/opt && mksquashfs ./${TMPDIR}/new ./${TMPDIR}/SYSTEM -all-root
+	# recalc md5sum
+	md5sum ${TMPDIR}/SYSTEM | sed "s#${TMPDIR}/SYSTEM#target/SYSTEM#" > ${TMPDIR}/SYSTEM.md5
+	mcopy -no -i ${DISK}@@${OFFSET} ./${TMPDIR}/SYSTEM ::/
+	mcopy -no -i ${DISK}@@${OFFSET} ./${TMPDIR}/SYSTEM.md5 ::/
+	echo "SYSTEM.squashfs patched!"
 
 	sync
 	rm -rf ${TMPDIR}

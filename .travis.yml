@@ -12,6 +12,7 @@ addons:
     - html-xml-utils
     - qemu-user-static
     - binfmt-support
+    - squashfs-tools
 script:
 - make BUILD_ARMBIAN=y BUILD_LIBREELEC=y BUILD_LAKKA=y BUILD_ALPINE=y build
 - ls -l output

@@ -20,7 +20,7 @@ func_modify() {
 	echo "OFFSET: $OFFSET"
 	mkdir -p ${TMPDIR}
 
-	mcopy -i ${DISK}@@${OFFSET} ::/extlinux/extlinux.conf ./${TMPDIR} || { echo "extlinux.conf dump failed!"; exit 1; }
+	mcopy -no -i ${DISK}@@${OFFSET} ::/extlinux/extlinux.conf ./${TMPDIR} || { echo "extlinux.conf dump failed!"; exit 1; }
 
 	sed -i "/^    fdt/c\ \ \ \ fdt \/$(basename ${DTB})" ./${TMPDIR}/extlinux.conf
 	sed -i '/^    append/s/quiet//' ./${TMPDIR}/extlinux.conf
@@ -32,12 +32,10 @@ func_modify() {
 	echo "#################"
 	cat ./${TMPDIR}/extlinux.conf
 	echo "#################"
-	mdel -i ${DISK}@@${OFFSET} ::/extlinux/extlinux.conf && \
-		mcopy -i ${DISK}@@${OFFSET} ./${TMPDIR}/extlinux.conf ::/extlinux/extlinux.conf && \
+	mcopy -no -i ${DISK}@@${OFFSET} ./${TMPDIR}/extlinux.conf ::/extlinux/extlinux.conf && \
 		echo "extlinux.conf patched!" || { echo "extlinux.conf patch failed!"; exit 1; }
 
-	mdel -i ${DISK}@@${OFFSET} ::/$(basename ${DTB}) 2>/dev/null
-	mcopy -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
+	mcopy -no -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
 
 	dd if=${IDB} of=${DISK} seek=64 bs=512 conv=notrunc status=noxfer && echo "idb patched: ${IDB}" || { echo "idb patch failed!"; exit 1; }
 	dd if=${UBOOT} of=${DISK} seek=16384 bs=512 conv=notrunc status=noxfer && echo "u-boot patched: ${UBOOT}" || { echo "u-boot patch failed!"; exit 1; }
