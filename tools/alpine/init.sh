@@ -2,7 +2,8 @@
 
 export PATH=/usr/sbin:/usr/bin:/bin:/sbin
 
-apk update --no-progress && apk add --no-progress alpine-base haveged dropbear parted e2fsprogs-extra dropbear-scp
+apk update --no-progress && \
+	apk add --no-progress alpine-base haveged dropbear parted e2fsprogs-extra dropbear-scp tzdata
 
 echo "root:admin" | chpasswd
 
@@ -24,7 +25,7 @@ sed -i '/^tty[2-6]/d' ./etc/inittab
 [ -z "`grep ttyFIQ0 ./etc/securetty`" ] && echo "ttyFIQ0" >> ./etc/securetty
 
 sed -i 's/pool.ntp.org/time1.aliyun.com/' ./etc/conf.d/ntpd
-setup-timezone -z Asia/Shanghai
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 echo "alpine" > ./etc/hostname
 
