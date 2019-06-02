@@ -162,7 +162,7 @@ func_release() {
 
 case "$1" in
 generate)
-	func_generate "$2" "$3" "$4" 
+	func_generate "$2" "$3" "$4"
 	;;
 release)
 	func_release "$2" "$3" "$4"

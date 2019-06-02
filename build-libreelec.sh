@@ -1,5 +1,5 @@
 #!/bin/bash
-# requirements: sfdisk mtools jq
+# requirements: sfdisk mtools jq squashfs-tools
 
 TMPDIR="tmp"
 origin="rock64"
