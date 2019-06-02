@@ -2,18 +2,20 @@ DTB_HEADLESS := dtbs/4.4-bsp/headless/rk3328-beikeyun.dtb
 DTB_BOX := dtbs/4.4-bsp/box/rk3328-beikeyun.dtb
 
 OUTPUT := output
+TARGETS := armbian libreelec lakka alpine
 
 .PHONY: help build clean
 
 help:
-	@echo "Usage: make BUILD_[SYSTEM1]=y BUILD_[SYSTEM2]=y build"
+	@echo "Usage: make BUILD_[system1]=y BUILD_[system2]=y build"
+	@echo "available system: $(TARGETS)"
 
-build: armbian libreelec lakka alpine
+build: $(TARGETS)
 
-clean: armbian_clean libreelec_clean lakka_clean alpine_clean
+clean: $(TARGETS:%=%_clean)
 	rm -f $(OUTPUT)/*.img $(OUTPUT)/*.xz
 
-ifeq ($(BUILD_ARMBIAN),y)
+ifeq ($(BUILD_armbian),y)
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
 ARMBIAN_PKGS := Ubuntu_bionic_default.7z Debian_stretch_default.7z
 
@@ -41,7 +43,7 @@ armbian:
 armbian_clean:
 endif
 
-ifeq ($(BUILD_LIBREELEC),y)
+ifeq ($(BUILD_libreelec),y)
 LIBREELEC_PKG := $(shell basename `hxwls "http://archive.libreelec.tv/?C=M;O=D" |grep 'rock64.img.gz$$' |head -1`)
 
 libreelec: libreelec_dl libreelec_release
@@ -66,7 +68,7 @@ libreelec:
 libreelec_clean:
 endif
 
-ifeq ($(BUILD_LAKKA),y)
+ifeq ($(BUILD_lakka),y)
 LAKKA_PKG := $(shell basename `hxwls "http://le.builds.lakka.tv/Rockchip.ROCK64.arm/?C=M&O=D" |grep 'img.gz$$' |head -1`)
 LAKKA_IDB := loader/idbloader.bin
 LAKKA_UBOOT_PATCH := loader/u-boot-libreelec.bin
@@ -93,7 +95,7 @@ lakka:
 lakka_clean:
 endif
 
-ifeq ($(BUILD_ALPINE),y)
+ifeq ($(BUILD_alpine),y)
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
 ARMBIAN_PKG := Ubuntu_bionic_default.7z
 

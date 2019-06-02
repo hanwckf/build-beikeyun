@@ -14,7 +14,7 @@ addons:
     - binfmt-support
     - squashfs-tools
 script:
-- make BUILD_ARMBIAN=y BUILD_LIBREELEC=y BUILD_LAKKA=y BUILD_ALPINE=y build
+- make BUILD_armbian=y BUILD_libreelec=y BUILD_lakka=y BUILD_alpine=y build
 - ls -l output
 deploy:
   provider: releases
