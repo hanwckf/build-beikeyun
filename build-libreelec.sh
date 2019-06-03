@@ -37,7 +37,7 @@ func_modify() {
 
 	# add /opt to SYSTEM.squashfs for entware
 	mcopy -no -i ${DISK}@@${OFFSET} ::/SYSTEM ./${TMPDIR} || { echo "SYSTEM.squashfs dump failed!"; exit 1; }
-	mkdir -p ./${TMPDIR}/new/opt && mksquashfs ./${TMPDIR}/new ./${TMPDIR}/SYSTEM -all-root
+	mkdir -p ./${TMPDIR}/new/opt && mksquashfs ./${TMPDIR}/new ./${TMPDIR}/SYSTEM -all-root -no-progress
 	# recalc md5sum
 	md5sum ${TMPDIR}/SYSTEM | sed "s#${TMPDIR}/SYSTEM#target/SYSTEM#" > ${TMPDIR}/SYSTEM.md5
 	mcopy -no -i ${DISK}@@${OFFSET} ./${TMPDIR}/SYSTEM ::/

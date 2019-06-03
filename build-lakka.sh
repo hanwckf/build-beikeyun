@@ -37,8 +37,8 @@ func_modify() {
 
 	mcopy -no -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
 
-	dd if=${IDB} of=${DISK} seek=64 bs=512 conv=notrunc status=noxfer && echo "idb patched: ${IDB}" || { echo "idb patch failed!"; exit 1; }
-	dd if=${UBOOT} of=${DISK} seek=16384 bs=512 conv=notrunc status=noxfer && echo "u-boot patched: ${UBOOT}" || { echo "u-boot patch failed!"; exit 1; }
+	dd if=${IDB} of=${DISK} seek=64 bs=512 conv=notrunc status=none && echo "idb patched: ${IDB}" || { echo "idb patch failed!"; exit 1; }
+	dd if=${UBOOT} of=${DISK} seek=16384 bs=512 conv=notrunc status=none && echo "u-boot patched: ${UBOOT}" || { echo "u-boot patch failed!"; exit 1; }
 	sync
 	rm -rf ${TMPDIR}
 }

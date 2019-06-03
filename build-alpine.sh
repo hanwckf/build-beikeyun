@@ -142,7 +142,7 @@ func_release() {
 
 	[ ! -f "$dlpkg" ] && echo "dlpkg not found!" && return 1
 	rm -rf ${tmpdir}
-	7z x -o${tmpdir} $dlpkg && cd ${tmpdir} && sha256sum -c sha256sum.sha && cd - > /dev/null || exit 1
+	7z x -bsp0 -bso0 -o${tmpdir} $dlpkg && cd ${tmpdir} && sha256sum -c sha256sum.sha && cd - > /dev/null || exit 1
 
 	armbian_img="$(ls ${tmpdir}/*.img)"
 	echo "alpine rootfs: $rootfs"
