@@ -16,8 +16,14 @@ clean: $(TARGETS:%=%_clean)
 	rm -f $(OUTPUT)/*.img $(OUTPUT)/*.xz
 
 ifeq ($(build_armbian),y)
-ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
-ARMBIAN_PKGS := Ubuntu_bionic_default.7z Debian_stretch_default.7z
+ARMBIAN_PKGS := Armbian_5.75_Rock64_Ubuntu_bionic_default_4.4.174.7z
+ARMBIAN_PKGS += Armbian_5.75_Rock64_Debian_stretch_default_4.4.174.7z
+
+ifneq ($(TRAVIS),)
+ARMBIAN_URL_BASE := https://dl.armbian.com/rock64/archive
+else
+ARMBIAN_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/armbian-releases/rock64/archive
+endif
 
 armbian: armbian_dl armbian_release
 
@@ -96,14 +102,18 @@ lakka_clean:
 endif
 
 ifeq ($(build_alpine),y)
-ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
-ARMBIAN_PKG := Ubuntu_bionic_default.7z
-
+ARMBIAN_PKG := Armbian_5.75_Rock64_Ubuntu_bionic_default_4.4.174.7z
 ALPINE_BRANCH := v3.9
 ALPINE_VERSION := 3.9.4
-ALPINE_URL_BASE := http://dl-cdn.alpinelinux.org/alpine/$(ALPINE_BRANCH)/releases/aarch64
-#ALPINE_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/alpine/$(ALPINE_BRANCH)/releases/aarch64
 ALPINE_PKG := alpine-minirootfs-$(ALPINE_VERSION)-aarch64.tar.gz
+
+ifneq ($(TRAVIS),)
+ARMBIAN_URL_BASE := https://dl.armbian.com/rock64/archive
+ALPINE_URL_BASE := http://dl-cdn.alpinelinux.org/alpine/$(ALPINE_BRANCH)/releases/aarch64
+else
+ARMBIAN_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/armbian-releases/rock64/archive
+ALPINE_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/alpine/$(ALPINE_BRANCH)/releases/aarch64
+endif
 
 alpine: armbian_alpine_dl alpine_dl alpine_release
 
@@ -117,7 +127,7 @@ alpine_dl: $(ALPINE_PKG)
 $(ALPINE_PKG):
 	wget $(ALPINE_URL_BASE)/$(ALPINE_PKG)
 
-alpine_release: armbian_dl alpine_dl
+alpine_release: armbian_alpine_dl alpine_dl
 	sudo ./build-alpine.sh release $(ARMBIAN_PKG) $(DTB_HEADLESS) $(ALPINE_PKG)
 
 alpine_clean:
