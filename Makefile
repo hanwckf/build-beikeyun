@@ -2,12 +2,12 @@ DTB_HEADLESS := dtbs/4.4-bsp/headless/rk3328-beikeyun.dtb
 DTB_BOX := dtbs/4.4-bsp/box/rk3328-beikeyun.dtb
 
 OUTPUT := output
-TARGETS := armbian libreelec lakka alpine
+TARGETS := armbian libreelec alpine lakka
 
 .PHONY: help build clean
 
 help:
-	@echo "Usage: make BUILD_[system1]=y BUILD_[system2]=y build"
+	@echo "Usage: make build_[system1]=y build_[system2]=y build"
 	@echo "available system: $(TARGETS)"
 
 build: $(TARGETS)
@@ -15,7 +15,7 @@ build: $(TARGETS)
 clean: $(TARGETS:%=%_clean)
 	rm -f $(OUTPUT)/*.img $(OUTPUT)/*.xz
 
-ifeq ($(BUILD_armbian),y)
+ifeq ($(build_armbian),y)
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
 ARMBIAN_PKGS := Ubuntu_bionic_default.7z Debian_stretch_default.7z
 
@@ -43,7 +43,7 @@ armbian:
 armbian_clean:
 endif
 
-ifeq ($(BUILD_libreelec),y)
+ifeq ($(build_libreelec),y)
 LIBREELEC_PKG := $(shell basename `hxwls "http://archive.libreelec.tv/?C=M;O=D" |grep 'rock64.img.gz$$' |head -1`)
 
 libreelec: libreelec_dl libreelec_release
@@ -68,7 +68,7 @@ libreelec:
 libreelec_clean:
 endif
 
-ifeq ($(BUILD_lakka),y)
+ifeq ($(build_lakka),y)
 LAKKA_PKG := $(shell basename `hxwls "http://le.builds.lakka.tv/Rockchip.ROCK64.arm/?C=M&O=D" |grep 'img.gz$$' |head -1`)
 LAKKA_IDB := loader/idbloader.bin
 LAKKA_UBOOT_PATCH := loader/u-boot-libreelec.bin
@@ -95,29 +95,27 @@ lakka:
 lakka_clean:
 endif
 
-ifeq ($(BUILD_alpine),y)
+ifeq ($(build_alpine),y)
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64
 ARMBIAN_PKG := Ubuntu_bionic_default.7z
 
+ALPINE_BRANCH := v3.9
 ALPINE_VERSION := 3.9.4
-ALPINE_URL_BASE := http://dl-cdn.alpinelinux.org/alpine/v3.9/releases/aarch64/
+ALPINE_URL_BASE := http://dl-cdn.alpinelinux.org/alpine/$(ALPINE_BRANCH)/releases/aarch64
+#ALPINE_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/alpine/$(ALPINE_BRANCH)/releases/aarch64
 ALPINE_PKG := alpine-minirootfs-$(ALPINE_VERSION)-aarch64.tar.gz
 
-alpine: armbian_dl alpine_dl alpine_release
+alpine: armbian_alpine_dl alpine_dl alpine_release
 
-armbian_dl: $(ARMBIAN_PKG)
+armbian_alpine_dl: $(ARMBIAN_PKG)
 
 $(ARMBIAN_PKG):
-	(if [ ! -f $(ARMBIAN_PKG) ]; then \
-		wget $(ARMBIAN_URL_BASE)/$(ARMBIAN_PKG) ; \
-	fi )
+	wget $(ARMBIAN_URL_BASE)/$(ARMBIAN_PKG)
 
 alpine_dl: $(ALPINE_PKG)
 
 $(ALPINE_PKG):
-	(if [ ! -f $(ALPINE_PKG) ]; then \
-		wget $(ALPINE_URL_BASE)/$(ALPINE_PKG) ; \
-	fi )
+	wget $(ALPINE_URL_BASE)/$(ALPINE_PKG)
 
 alpine_release: armbian_dl alpine_dl
 	sudo ./build-alpine.sh release $(ARMBIAN_PKG) $(DTB_HEADLESS) $(ALPINE_PKG)
