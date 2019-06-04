@@ -27,18 +27,17 @@ func_modify() {
 	local dtb=$1
 	[ ! -f "$dtb" ] && echo "dtb file not found!" && return 1
 
+	# patch /boot
 	echo "patch /boot"
 	cp -f $dtb $mount_point/boot/
-
 	sed -i '/^verbosity/cverbosity=7' $mount_point/boot/armbianEnv.txt
-
 	if [ -z "`grep fdtfile $mount_point/boot/armbianEnv.txt`" ]; then
 		echo "fdtfile=$(basename $dtb)" >> $mount_point/boot/armbianEnv.txt
 	fi
-
 	sed -i 's#${prefix}dtb/${fdtfile}#${prefix}/${fdtfile}#' $mount_point/boot/boot.cmd
 	mkimage -C none -T script -d $mount_point/boot/boot.cmd $mount_point/boot/boot.scr
 
+	# patch rootfs
 	echo "patch rootfs"
 	sed -i 's#http://ports.ubuntu.com#https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports#' $mount_point/etc/apt/sources.list
 	sed -i 's#http://httpredir.debian.org#https://mirrors.tuna.tsinghua.edu.cn#' $mount_point/etc/apt/sources.list

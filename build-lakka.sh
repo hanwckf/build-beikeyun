@@ -13,6 +13,7 @@ func_modify() {
 	local UBOOT="$4"
 	[ ! -f "$DISK" -o ! -f "$DTB" ] && echo "file not found!" && exit 1
 
+	# get offset of 1st partition
 	SYSTEM_PART_START=$(sfdisk -J ${DISK} |jq .partitiontable.partitions[0].start)
 	OFFSET=$(( ${SYSTEM_PART_START} * 512 ))
 
@@ -20,8 +21,8 @@ func_modify() {
 	echo "OFFSET: $OFFSET"
 	mkdir -p ${TMPDIR}
 
+	# patch extlinux.conf
 	mcopy -no -i ${DISK}@@${OFFSET} ::/extlinux/extlinux.conf ./${TMPDIR} || { echo "extlinux.conf dump failed!"; exit 1; }
-
 	sed -i "/^    fdt/c\ \ \ \ fdt \/$(basename ${DTB})" ./${TMPDIR}/extlinux.conf
 	sed -i '/^    append/s/quiet//' ./${TMPDIR}/extlinux.conf
 	if [ -z "`grep panic ./${TMPDIR}/extlinux.conf`" ]; then
@@ -35,8 +36,10 @@ func_modify() {
 	mcopy -no -i ${DISK}@@${OFFSET} ./${TMPDIR}/extlinux.conf ::/extlinux/extlinux.conf && \
 		echo "extlinux.conf patched!" || { echo "extlinux.conf patch failed!"; exit 1; }
 
+	# copy dtb
 	mcopy -no -i ${DISK}@@${OFFSET} ${DTB} ::/ && echo "dtb patched: ${DTB}" || { echo "dtb patch failed!"; exit 1; }
 
+	# replace u-boot and idbloader from libreelec
 	dd if=${IDB} of=${DISK} seek=64 bs=512 conv=notrunc status=none && echo "idb patched: ${IDB}" || { echo "idb patch failed!"; exit 1; }
 	dd if=${UBOOT} of=${DISK} seek=16384 bs=512 conv=notrunc status=none && echo "u-boot patched: ${UBOOT}" || { echo "u-boot patch failed!"; exit 1; }
 	sync

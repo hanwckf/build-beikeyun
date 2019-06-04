@@ -1,5 +1,5 @@
 #!/bin/bash
-# requirements: sudo jq sfdisk u-boot-tools qemu bimfmt_misc
+# requirements: sudo jq sfdisk u-boot-tools qemu bimfmt_misc parted
 # require armbian kernel and u-boot
 
 [ "$EUID" != "0" ] && echo "please run as root" && exit 1
@@ -124,8 +124,8 @@ func_generate() {
 	ln -sf /etc/init.d/resizemmc $rootfs_mount_point/etc/runlevels/default/resizemmc
 	touch $rootfs_mount_point/root/.need_resize
 
-	umount $rootfs_mount_point
 	# generate img
+	umount $rootfs_mount_point
 	echo "copy boot header from armbian img"
 	dd if=$armbian_img bs=512 count=$ROOTOFFSET status=none of=${output}/${img_new}
 	cat $tmpdir/rootfs.img >> ${output}/${img_new}
