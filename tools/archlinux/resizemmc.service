@@ -1,0 +1,14 @@
+[Unit]
+Description=filesystem resize
+Before=basic.target
+After=sysinit.target local-fs.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/resizemmc.sh
+TimeoutStartSec=1min
+
+[Install]
+WantedBy=basic.target

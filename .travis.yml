@@ -13,8 +13,9 @@ addons:
     - qemu-user-static
     - binfmt-support
     - squashfs-tools
+    - bsdtar
 script:
-- make build_armbian=y build_libreelec=y build_lakka=y build_alpine=y build
+- make build_armbian=y build_libreelec=y build_lakka=y build_alpine=y build_archlinux=y build
 - ls -l output
 deploy:
   provider: releases

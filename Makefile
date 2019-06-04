@@ -2,7 +2,7 @@ DTB_HEADLESS := dtbs/4.4-bsp/headless/rk3328-beikeyun.dtb
 DTB_BOX := dtbs/4.4-bsp/box/rk3328-beikeyun.dtb
 
 OUTPUT := output
-TARGETS := armbian libreelec alpine lakka
+TARGETS := armbian libreelec alpine archlinux lakka
 
 .PHONY: help build clean
 
@@ -136,4 +136,39 @@ alpine_clean:
 else
 alpine:
 alpine_clean:
+endif
+
+ifeq ($(build_archlinux),y)
+ARMBIAN_PKG := Armbian_5.75_Rock64_Ubuntu_bionic_default_4.4.174.7z
+ARCHLINUX_PKG := ArchLinuxARM-aarch64-latest.tar.gz
+
+ifneq ($(TRAVIS),)
+ARMBIAN_URL_BASE := https://dl.armbian.com/rock64/archive
+ARCHLINUX_URL_BASE := http://os.archlinuxarm.org/os
+else
+ARMBIAN_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/armbian-releases/rock64/archive
+ARCHLINUX_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/os
+endif
+
+archlinux: armbian_archlinux_dl archlinux_dl archlinux_release
+
+armbian_archlinux_dl: $(ARMBIAN_PKG)
+
+$(ARMBIAN_PKG):
+	wget $(ARMBIAN_URL_BASE)/$(ARMBIAN_PKG)
+
+archlinux_dl: $(ARCHLINUX_PKG)
+
+$(ARCHLINUX_PKG):
+	wget $(ARCHLINUX_URL_BASE)/$(ARCHLINUX_PKG)
+
+archlinux_release: armbian_archlinux_dl archlinux_dl
+	sudo ./build-archlinux.sh release $(ARMBIAN_PKG) $(DTB_HEADLESS) $(ARCHLINUX_PKG)
+
+archlinux_clean:
+	rm -f $(ARMBIAN_PKG) $(ARCHLINUX_PKG)
+
+else
+archlinux:
+archlinux_clean:
 endif
