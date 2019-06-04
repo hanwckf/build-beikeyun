@@ -3,3 +3,4 @@
 *.7z
 *.gz
 tmp
+!/loader/**
