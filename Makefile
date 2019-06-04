@@ -76,8 +76,8 @@ endif
 
 ifeq ($(build_lakka),y)
 LAKKA_PKG := $(shell basename `hxwls "http://le.builds.lakka.tv/Rockchip.ROCK64.arm/?C=M&O=D" |grep 'img.gz$$' |head -1`)
-LAKKA_IDB := loader/idbloader-libreelec.bin
-LAKKA_UBOOT_PATCH := loader/u-boot-libreelec.bin
+LAKKA_IDB := loader/libreelec/idbloader.bin
+LAKKA_UBOOT_PATCH := loader/libreelec/u-boot.bin
 
 lakka: lakka_dl lakka_release
 
