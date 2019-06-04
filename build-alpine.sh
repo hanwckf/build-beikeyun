@@ -54,7 +54,7 @@ func_generate() {
 
 	# extract alpine rootfs
 	echo "extract alpine rootfs($rootfs) to $rootfs_mount_point"
-	tar xf $rootfs -C $rootfs_mount_point
+	tar xpf $rootfs -C $rootfs_mount_point
 
 	# mount armbian rootfs
 	func_mount_armbian $armbian_img $armbian_mount_point
