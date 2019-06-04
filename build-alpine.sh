@@ -16,7 +16,7 @@ target="beikeyun"
 rootsize=200
 ROOTOFFSET=32768
 
-qemu_static="./tools/alpine/qemu-aarch64-static"
+qemu_static="./tools/qemu/qemu-aarch64-static"
 
 func_umount_armbian() {
 	umount $armbian_mount_point

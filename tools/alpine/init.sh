@@ -25,7 +25,7 @@ sed -i '/^tty[2-6]/d' ./etc/inittab
 [ -z "`grep ttyFIQ0 ./etc/securetty`" ] && echo "ttyFIQ0" >> ./etc/securetty
 
 sed -i 's/pool.ntp.org/time1.aliyun.com/' ./etc/conf.d/ntpd
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+ln -sf /usr/share/zoneinfo/Asia/Shanghai ./etc/localtime
 
 echo "alpine" > ./etc/hostname
 
