@@ -60,11 +60,6 @@ func_generate() {
 	echo "extract archlinux rootfs($rootfs) to $rootfs_mount_point"
 	bsdtar -xpf $rootfs -C $rootfs_mount_point
 
-	# change mirrors
-	if [ -z "$TRAVIS" ]; then
-		echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/$arch/$repo' > $rootfs_mount_point/etc/pacman.d/mirrorlist
-	fi
-
 	# chroot to archlinux rootfs
 	echo "configure binfmt to chroot"
 	modprobe binfmt_misc

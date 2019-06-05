@@ -24,6 +24,9 @@ echo 'LANG=en_US.utf8' > ./etc/locale.conf
 echo 'KEYMAP=us' > ./etc/vconsole.conf
 ln -sf ../usr/share/zoneinfo/Asia/Shanghai ./etc/localtime
 
+# change mirrors
+echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/$arch/$repo' > ./etc/pacman.d/mirrorlist
+
 echo "root:admin" |chpasswd
 
 # clean
