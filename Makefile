@@ -98,10 +98,10 @@ lakka_clean:
 	fi )
 
 lakka_dl:
-	@( if [ -n "$(LAKKA_PKG)" ]; then \
+	( if [ -n "$(LAKKA_PKG)" ]; then \
 		if [ ! -f $(DL)/$(LAKKA_PKG) ]; then \
 			#$(WGET) "$(LAKKA_URL)/$(LAKKA_PKG)" ; \
-			$(AXEL) "$(LAKKA_URL)/$(LAKKA_PKG)" ; \
+			$(AXEL) -q "$(LAKKA_URL)/$(LAKKA_PKG)" ; \
 		fi \
 	else \
 		echo "fetch lakka dl url fail" ; exit 1 ; \
