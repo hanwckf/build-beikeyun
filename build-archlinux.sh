@@ -139,6 +139,7 @@ func_release() {
 
 	[ ! -f "$dlpkg" ] && echo "dlpkg not found!" && return 1
 	rm -rf ${tmpdir}
+	echo "Extract 7zpkg and checksum..."
 	7z x -y -o${tmpdir} $dlpkg >/dev/null && cd ${tmpdir} && sha256sum -c sha256sum.sha && cd - > /dev/null || exit 1
 
 	armbian_img="$(ls ${tmpdir}/*.img)"

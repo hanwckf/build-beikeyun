@@ -1,5 +1,5 @@
 #!/bin/bash
-# requirements: sfdisk mtools jq
+# requirements: sfdisk mtools jq axel
 
 TMPDIR="tmp"
 origin="ROCK64"
