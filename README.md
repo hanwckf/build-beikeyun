@@ -13,3 +13,6 @@
   - default root password: root
 - alpine
   - default root password: admin
+- archlinuxarm
+  - default root password: admin
+  - run `pacman-key --init && pacman-key --populate archlinuxarm` to init keyring
