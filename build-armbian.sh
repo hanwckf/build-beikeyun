@@ -45,6 +45,7 @@ func_modify() {
 	sed -i 's#http://apt.armbian.com#https://mirrors.tuna.tsinghua.edu.cn/armbian#' $mount_point/etc/apt/sources.list.d/armbian.list
 
 	rm -f $mount_point/etc/systemd/system/getty.target.wants/serial-getty\@ttyS2.service
+	ln -sf /usr/share/zoneinfo/Asia/Shanghai $mount_point/etc/localtime
 
 	# for armbian dev
 :<<!
