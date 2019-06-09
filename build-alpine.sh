@@ -13,7 +13,7 @@ output="output"
 origin="minirootfs"
 target="beikeyun"
 
-rootsize=200
+rootsize=600
 ROOTOFFSET=32768
 
 qemu_static="./tools/qemu/qemu-aarch64-static"
