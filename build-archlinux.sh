@@ -78,7 +78,7 @@ func_generate() {
 
 	cp ./tools/archlinux/init.sh $rootfs_mount_point/init.sh
 	echo "chroot to archlinux rootfs"
-	chroot $rootfs_mount_point /bin/sh -c 'LC_ALL=C /init.sh'
+	LANG=C LC_ALL=C chroot $rootfs_mount_point /init.sh
 
 	rm -f $rootfs_mount_point/init.sh
 	[ -n "$qemu" ] && rm -f $rootfs_mount_point/$qemu || rm -f $rootfs_mount_point/usr/bin/qemu-aarch64-static
