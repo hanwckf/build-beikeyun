@@ -78,7 +78,7 @@ func_generate() {
 
 	cp ./tools/archlinux/init.sh $rootfs_mount_point/init.sh
 	echo "chroot to archlinux rootfs"
-	chroot $rootfs_mount_point /init.sh
+	chroot $rootfs_mount_point /bin/sh -c 'LC_ALL=C /init.sh'
 
 	rm -f $rootfs_mount_point/init.sh
 	[ -n "$qemu" ] && rm -f $rootfs_mount_point/$qemu || rm -f $rootfs_mount_point/usr/bin/qemu-aarch64-static
@@ -110,6 +110,7 @@ func_generate() {
 	mkimage -C none -T script -d $rootfs_mount_point/boot/boot.cmd $rootfs_mount_point/boot/boot.scr
 
 	# add resize script
+	echo "add resize mmc script"
 	cp ./tools/archlinux/resizemmc.service $rootfs_mount_point/lib/systemd/system/
 	cp ./tools/archlinux/resizemmc.sh $rootfs_mount_point/sbin/
 	mkdir -p $rootfs_mount_point/etc/systemd/system/basic.target.wants

@@ -19,9 +19,8 @@ build: $(TARGETS)
 clean: $(TARGETS:%=%_clean)
 	rm -f $(OUTPUT)/*.img $(OUTPUT)/*.xz
 
-ifeq ($(build_armbian),y)
-ARMBIAN_PKGS := Armbian_5.88_Rock64_Ubuntu_bionic_default_4.4.180.7z
-ARMBIAN_PKGS += Armbian_5.88_Rock64_Debian_stretch_default_4.4.180.7z
+ARMBIAN_PKG_UBUNTU := Armbian_5.88_Rock64_Ubuntu_bionic_default_4.4.180.7z
+ARMBIAN_PKG_DEBIAN := Armbian_5.88_Rock64_Debian_stretch_default_4.4.180.7z
 
 ifneq ($(TRAVIS),)
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64/archive
@@ -29,26 +28,23 @@ else
 ARMBIAN_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/armbian-releases/rock64/archive
 endif
 
-armbian: armbian_dl armbian_release
+ARMBIAN_PKG_%:
+	@( if [ ! -f "$(DL)/$($(@))" ]; then \
+		$(WGET) $(ARMBIAN_URL_BASE)/$($(@)) ; \
+	fi )
 
-armbian_dl: $(ARMBIAN_PKGS)
+ARMBIAN_PKG_%_CLEAN:
+	rm -f $(DL)/$($(@:_CLEAN=))
 
-$(ARMBIAN_PKGS):
-	( for pkg in $(ARMBIAN_PKGS); do \
-		if [ ! -f $(DL)/$$pkg ]; then \
-			$(WGET) $(ARMBIAN_URL_BASE)/$$pkg ; \
-		fi \
-	done )
+ifeq ($(build_armbian),y)
+ARMBIAN_TARGETS := ARMBIAN_PKG_UBUNTU ARMBIAN_PKG_DEBIAN
 
-armbian_release: $(ARMBIAN_PKGS)
-	( for pkg in $(ARMBIAN_PKGS); do \
+armbian: $(ARMBIAN_TARGETS)
+	( for pkg in $(foreach n,$^,$($(n))); do \
 		sudo ./build-armbian.sh release $(DL)/$$pkg $(DTB_HEADLESS) ; \
 	done )
 
-armbian_clean:
-	( for pkg in $(ARMBIAN_PKGS); do \
-		rm -f $(DL)/$$pkg ; \
-	done )
+armbian_clean: $(ARMBIAN_TARGETS:%=%_CLEAN)
 
 else
 armbian:
@@ -116,36 +112,28 @@ lakka_clean:
 endif
 
 ifeq ($(build_alpine),y)
-ARMBIAN_PKG := Armbian_5.75_Rock64_Ubuntu_bionic_default_4.4.174.7z
 ALPINE_BRANCH := v3.9
 ALPINE_VERSION := 3.9.4
 ALPINE_PKG := alpine-minirootfs-$(ALPINE_VERSION)-aarch64.tar.gz
 
 ifneq ($(TRAVIS),)
-ARMBIAN_URL_BASE := https://dl.armbian.com/rock64/archive
 ALPINE_URL_BASE := http://dl-cdn.alpinelinux.org/alpine/$(ALPINE_BRANCH)/releases/aarch64
 else
-ARMBIAN_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/armbian-releases/rock64/archive
 ALPINE_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/alpine/$(ALPINE_BRANCH)/releases/aarch64
 endif
 
-alpine: armbian_alpine_dl alpine_dl alpine_release
+alpine: alpine_dl alpine_release
 
-armbian_alpine_dl: $(ARMBIAN_PKG)
+alpine_dl: $(DL)/$(ALPINE_PKG)
 
-$(ARMBIAN_PKG):
-	$(WGET) $(ARMBIAN_URL_BASE)/$(ARMBIAN_PKG)
-
-alpine_dl: $(ALPINE_PKG)
-
-$(ALPINE_PKG):
+$(DL)/$(ALPINE_PKG):
 	$(WGET) $(ALPINE_URL_BASE)/$(ALPINE_PKG)
 
-alpine_release: armbian_alpine_dl alpine_dl
-	sudo ./build-alpine.sh release $(DL)/$(ARMBIAN_PKG) $(DTB_HEADLESS) $(DL)/$(ALPINE_PKG)
+alpine_release: ARMBIAN_PKG_UBUNTU alpine_dl
+	sudo ./build-alpine.sh release $(DL)/$(ARMBIAN_PKG_UBUNTU) $(DTB_HEADLESS) $(DL)/$(ALPINE_PKG)
 
-alpine_clean:
-	rm -f $(DL)/$(ARMBIAN_PKG) $(DL)/$(ALPINE_PKG)
+alpine_clean: ARMBIAN_PKG_UBUNTU_CLEAN
+	rm -f $(DL)/$(ALPINE_PKG)
 
 else
 alpine:
@@ -153,34 +141,26 @@ alpine_clean:
 endif
 
 ifeq ($(build_archlinux),y)
-ARMBIAN_PKG := Armbian_5.75_Rock64_Ubuntu_bionic_default_4.4.174.7z
 ARCHLINUX_PKG := ArchLinuxARM-aarch64-latest.tar.gz
 
 ifneq ($(TRAVIS),)
-ARMBIAN_URL_BASE := https://dl.armbian.com/rock64/archive
 ARCHLINUX_URL_BASE := http://os.archlinuxarm.org/os
 else
-ARMBIAN_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/armbian-releases/rock64/archive
 ARCHLINUX_URL_BASE := https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/os
 endif
 
-archlinux: armbian_archlinux_dl archlinux_dl archlinux_release
+archlinux: archlinux_dl archlinux_release
 
-armbian_archlinux_dl: $(ARMBIAN_PKG)
+archlinux_dl: $(DL)/$(ARCHLINUX_PKG)
 
-$(ARMBIAN_PKG):
-	$(WGET) $(ARMBIAN_URL_BASE)/$(ARMBIAN_PKG)
-
-archlinux_dl: $(ARCHLINUX_PKG)
-
-$(ARCHLINUX_PKG):
+$(DL)/$(ARCHLINUX_PKG):
 	$(WGET) $(ARCHLINUX_URL_BASE)/$(ARCHLINUX_PKG)
 
-archlinux_release: armbian_archlinux_dl archlinux_dl
-	sudo ./build-archlinux.sh release $(DL)/$(ARMBIAN_PKG) $(DTB_HEADLESS) $(DL)/$(ARCHLINUX_PKG)
+archlinux_release: ARMBIAN_PKG_UBUNTU archlinux_dl
+	sudo ./build-archlinux.sh release $(DL)/$(ARMBIAN_PKG_UBUNTU) $(DTB_HEADLESS) $(DL)/$(ARCHLINUX_PKG)
 
-archlinux_clean:
-	rm -f $(DL)/$(ARMBIAN_PKG) $(DL)/$(ARCHLINUX_PKG)
+archlinux_clean: ARMBIAN_PKG_UBUNTU_CLEAN
+	rm -f $(DL)/$(ARCHLINUX_PKG)
 
 else
 archlinux:
