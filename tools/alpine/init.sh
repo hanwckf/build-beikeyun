@@ -44,6 +44,7 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet dhcp
+	hostname alpine
 
 EOF
 
