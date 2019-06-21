@@ -46,3 +46,5 @@ auto eth0
 iface eth0 inet dhcp
 
 EOF
+
+echo "kernel.random.write_wakeup_threshold=1024" > ./etc/sysctl.d/01-random.conf
