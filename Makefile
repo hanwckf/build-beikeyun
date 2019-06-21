@@ -112,8 +112,8 @@ lakka_clean:
 endif
 
 ifeq ($(build_alpine),y)
-ALPINE_BRANCH := v3.9
-ALPINE_VERSION := 3.9.4
+ALPINE_BRANCH := v3.10
+ALPINE_VERSION := 3.10.0
 ALPINE_PKG := alpine-minirootfs-$(ALPINE_VERSION)-aarch64.tar.gz
 
 ifneq ($(TRAVIS),)
