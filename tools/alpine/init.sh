@@ -7,16 +7,25 @@ apk update --no-progress && \
 
 echo "root:admin" | chpasswd
 
-for svc in networking urandom swclock; do
+svc_boot="networking urandom swclock sysctl modules"
+for svc in $svc_boot; do
 	if [ -f ./etc/init.d/$svc ]; then
 		ln -sf /etc/init.d/$svc ./etc/runlevels/boot/$svc
 	fi
 done
 
-for svc in cron crond dropbear haveged ntpd; do
+svc_default="crond dropbear haveged ntpd"
+for svc in $svc_default; do
 	if [ -f ./etc/init.d/$svc ]; then
 		ln -sf /etc/init.d/$svc ./etc/runlevels/default/$svc
 	fi
+done
+
+svc_shutdown="killprocs mount-ro savecache"
+for svc in $svc_shutdown; do
+        if [ -f ./etc/init.d/$svc ]; then
+                ln -sf /etc/init.d/$svc ./etc/runlevels/shutdown/$svc
+        fi
 done
 
 sed -i '/^tty[2-6]/d' ./etc/inittab
@@ -35,6 +44,5 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet dhcp
-	hostname alpine
 
 EOF
