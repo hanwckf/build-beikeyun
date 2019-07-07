@@ -83,7 +83,7 @@ endif
 ifeq ($(build_lakka),y)
 LAKKA_URL := http://le.builds.lakka.tv/Rockchip.ROCK64.arm
 LAKKA_PKG := $(shell basename "`hxwls "$(LAKKA_URL)/?C=M&O=D" |grep 'img.gz$$' |head -1`")
-LAKKA_IDB := loader/libreelec/idbloader.bin
+LAKKA_IDB := loader/armbian-5.75/idbloader.bin
 LAKKA_UBOOT_PATCH := loader/libreelec/u-boot.bin
 
 lakka: lakka_dl lakka_release
