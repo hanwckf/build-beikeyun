@@ -44,6 +44,9 @@ func_modify() {
 	sed -i 's#http://security.debian.org#https://mirrors.tuna.tsinghua.edu.cn/debian-security#' $mount_point/etc/apt/sources.list
 	sed -i 's#http://apt.armbian.com#https://mirrors.tuna.tsinghua.edu.cn/armbian#' $mount_point/etc/apt/sources.list.d/armbian.list
 
+	sed -i 's/ENABLED=true/#ENABLED=true/' $mount_point/etc/default/armbian-zram-config
+	sed -i 's/ENABLED=true/#ENABLED=true/' $mount_point/etc/default/armbian-ramlog
+
 	rm -f $mount_point/etc/systemd/system/getty.target.wants/serial-getty\@ttyS2.service
 	ln -sf /usr/share/zoneinfo/Asia/Shanghai $mount_point/etc/localtime
 
