@@ -50,17 +50,6 @@ func_modify() {
 	rm -f $mount_point/etc/systemd/system/getty.target.wants/serial-getty\@ttyS2.service
 	ln -sf /usr/share/zoneinfo/Asia/Shanghai $mount_point/etc/localtime
 
-	# for armbian dev
-:<<!
-	if [ -z "`grep eth0 $mount_point/etc/network/interfaces`" ]; then
-		cat >> $mount_point/etc/network/interfaces <<- EOF
-allow-hotplug eth0
-iface eth0 inet dhcp
-iface eth0 inet6 auto
-		EOF
-	fi
-	sed -i '/^#NTP=/cNTP=time1.aliyun.com 2001:470:0:50::2' $mount_point/etc/systemd/timesyncd.conf
-!
 	sync
 }
 

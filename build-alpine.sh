@@ -93,11 +93,7 @@ func_generate() {
 	# chroot to alpine rootfs
 	echo "configure binfmt to chroot"
 	modprobe binfmt_misc
-	if [ -e /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
-		qemu="`grep 'interpreter' /proc/sys/fs/binfmt_misc/qemu-aarch64 |cut -d ' ' -f2`"
-		echo "copy $qemu to $rootfs_mount_point/$qemu"
-		cp $qemu $rootfs_mount_point/$qemu
-	elif [ -e /proc/sys/fs/binfmt_misc/register ]; then
+	if [ -e /proc/sys/fs/binfmt_misc/register ]; then
 		echo -1 > /proc/sys/fs/binfmt_misc/status
 		echo ":arm64:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-aarch64-static:OC" > /proc/sys/fs/binfmt_misc/register
 		echo "copy $qemu_static to $rootfs_mount_point/usr/bin/"
