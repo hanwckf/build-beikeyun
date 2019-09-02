@@ -19,8 +19,8 @@ build: $(TARGETS)
 clean: $(TARGETS:%=%_clean)
 	rm -f $(OUTPUT)/*.img $(OUTPUT)/*.xz
 
-ARMBIAN_PKG_UBUNTU := Armbian_5.88_Rock64_Ubuntu_bionic_default_4.4.180.7z
-ARMBIAN_PKG_DEBIAN := Armbian_5.88_Rock64_Debian_stretch_default_4.4.180.7z
+ARMBIAN_PKG_UBUNTU := Armbian_5.90_Rock64_Ubuntu_bionic_default_4.4.182.7z
+ARMBIAN_PKG_DEBIAN := Armbian_5.91_Rock64_Debian_buster_default_4.4.184.7z
 
 ifneq ($(TRAVIS),)
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64/archive
