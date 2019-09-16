@@ -14,7 +14,7 @@ addons:
     - bsdtar
     - axel
 script:
-- make build_armbian=y build_libreelec=y build_lakka=y build_archlinux=y build
+- make build_armbian=y build_libreelec=y build_archlinux=y build
 - ls -l output
 deploy:
   provider: releases
