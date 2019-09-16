@@ -10,8 +10,6 @@ addons:
     - jq
     - u-boot-tools
     - html-xml-utils
-    - qemu-user-static
-    - binfmt-support
     - squashfs-tools
     - bsdtar
     - axel
