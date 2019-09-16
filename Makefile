@@ -21,6 +21,7 @@ clean: $(TARGETS:%=%_clean)
 
 ARMBIAN_PKG_UBUNTU := Armbian_5.90_Rock64_Ubuntu_bionic_default_4.4.182.7z
 ARMBIAN_PKG_DEBIAN := Armbian_5.91_Rock64_Debian_buster_default_4.4.184.7z
+ARMBIAN_PKG_DEBIAN_STRETCH := Armbian_5.90_Rock64_Debian_stretch_default_4.4.182.7z
 
 ifneq ($(TRAVIS),)
 ARMBIAN_URL_BASE := https://dl.armbian.com/rock64/archive
@@ -37,7 +38,7 @@ ARMBIAN_PKG_%_CLEAN:
 	rm -f $(DL)/$($(@:_CLEAN=))
 
 ifeq ($(build_armbian),y)
-ARMBIAN_TARGETS := ARMBIAN_PKG_UBUNTU ARMBIAN_PKG_DEBIAN
+ARMBIAN_TARGETS := ARMBIAN_PKG_UBUNTU ARMBIAN_PKG_DEBIAN ARMBIAN_PKG_DEBIAN_STRETCH
 
 armbian: $(ARMBIAN_TARGETS)
 	( for pkg in $(foreach n,$^,$($(n))); do \
