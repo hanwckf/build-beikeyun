@@ -31,4 +31,6 @@ echo "root:admin" |chpasswd
 
 # clean
 pacman -Sc --noconfirm
+rm -rf ./var/log/journal
 rm -rf ./lib/modules ./lib/firmware ./boot
+
